@@ -21,3 +21,11 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+:host .mat-select-panel mat-option.mat-option {
+  height: unset;
+}
+
+:host .mat-option-text.mat-option-text {
+  white-space: normal;
+}

@@ -6,8 +6,8 @@ export async function seed(knex: Knex): Promise<void> {
 
     // Inserts seed entries
     await knex('Settings').insert([
-        { title: 'windowWidth', setting: '500' },
-        { title: 'windowHeight', setting: '500' },
+        { title: 'windowWidth', setting: '1280' },
+        { title: 'windowHeight', setting: '720' },
         { title: 'windowX', setting: '300' },
         { title: 'windowY', setting: '300' },
     ]);

@@ -126,6 +126,7 @@ export class DialogAddTunnelComponent {
     if (result) {
       this.proxies.push({id: result, ...this.newProxy});
       this.newTunnel.proxy = result;
+      this.showAddProxy = false;
       this.newProxy = {
         title: null,
         host: null,

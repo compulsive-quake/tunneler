@@ -1,51 +1,18 @@
-import {app, BrowserWindow, Tray, Menu } from 'electron';
+import { app, BrowserWindow, Tray, Menu } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
-import {getConfig, initHandles} from './services';
+import { getConfig, initHandles, monitorPosition, initTray } from './services';
 
 let win: BrowserWindow = null;
-let tray;
-let isQuiting;
-
-const tunnelsEnabled = true;
 
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve');
 
-app.disableHardwareAcceleration();
-
-app.on('before-quit', function () {
-  isQuiting = true;
-});
+// app.on('before-quit', function () {});
 
 async function createWindow() {
   const config = await getConfig();
-  initHandles();
-
-  tray = new Tray('./icon.png');
-  tray.on('click', ()=> win.show());
-
-  tray.setContextMenu(Menu.buildFromTemplate([
-    {
-      label: 'Show App',
-      click: ()=> win.show(),
-      checked: false,
-    },
-    {
-     label: 'Quit', click: ()=> {
-        isQuiting = true;
-        app.quit();
-      }
-    },
-    {
-      label: 'Enable tunnels',
-      type: 'checkbox',
-      checked: tunnelsEnabled,
-    }
-  ]));
-
-  // const size = screen.getPrimaryDisplay().workAreaSize;
 
   win = new BrowserWindow({
     x: Number(config.windowX),
@@ -61,19 +28,15 @@ async function createWindow() {
     autoHideMenuBar: true,
   });
 
-  win.on('minimize', (event)=> {
-    event.preventDefault();
-    win.hide();
-  });
-
+  initHandles();
+  initTray(win);
+  monitorPosition(win);
 
   if (serve) {
     const debug = require('electron-debug');
     debug();
 
     require('electron-reloader')(module);
-
-    // ipcMain.on('set-title', handleSetTitle);
 
     win.loadURL('http://localhost:4200');
 
@@ -93,17 +56,18 @@ async function createWindow() {
     }));
   }
 
-  // Emitted when the window is closed.
-  win.on('closed', () => {
-    win = null;
-  });
 }
 
 try {
+  app.disableHardwareAcceleration();
+
   app.on('ready', () => setTimeout(createWindow, 400));
 
   app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') { app.quit(); }
+    //todo: check config for minimize to tray
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
   });
 
   app.on('activate', () => {

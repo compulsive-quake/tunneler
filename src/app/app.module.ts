@@ -32,6 +32,7 @@ import { DetailModule } from './detail/detail.module';
 import { AppComponent } from './app.component';
 import { DialogAddTunnelComponent } from './dialog-add-tunnel/dialog-add-tunnel.component';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 
@@ -39,38 +40,39 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
 
 @NgModule({
   declarations: [AppComponent, DialogAddTunnelComponent],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        HttpClientModule,
-        CoreModule,
-        SharedModule,
-        HomeModule,
-        DetailModule,
-        AppRoutingModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: httpLoaderFactory,
-                deps: [HttpClient]
-            }
-        }),
-        BrowserAnimationsModule,
-        FlexLayoutModule,
-        DialogModule,
-        A11yModule,
-        MatSliderModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatDialogModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatSnackBarModule,
-        MatDividerModule,
-    ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    CoreModule,
+    SharedModule,
+    HomeModule,
+    DetailModule,
+    AppRoutingModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    DialogModule,
+    A11yModule,
+    MatSliderModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatSnackBarModule,
+    MatDividerModule,
+    MatTooltipModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
