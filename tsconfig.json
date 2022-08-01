@@ -1,8 +1,8 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
-    "module": "es2020",
+    "module": "commonjs",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

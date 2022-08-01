@@ -1,26 +1,13 @@
 {
-  "name": "angular-electron",
-  "version": "11.0.0",
-  "description": "Angular 14 with Electron 19 (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/maximegris/angular-electron",
+  "name": "tunneler",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/compulsive-quake/tunneler",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Compulsive Quake",
+    "email": "rageworthy@gmail.com"
   },
-  "keywords": [
-    "angular",
-    "angular 14",
-    "electron",
-    "electron 19",
-    "nodejs",
-    "typescript",
-    "playwright",
-    "eslint",
-    "sass",
-    "windows",
-    "mac",
-    "linux"
-  ],
+  "keywords": [],
   "main": "app/main.js",
   "private": true,
   "scripts": {
@@ -37,22 +24,32 @@
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
     "electron:build": "npm run build:prod && electron-builder build --publish=never",
+    "rebuild-sqlite": "electron-rebuild -f -w better-sqlite3",
     "test": "ng test --watch=false",
     "test:watch": "ng test",
     "e2e": "npm run build:prod && playwright test -c e2e/playwright.config.ts e2e/",
     "e2e:show-trace": "playwright show-trace e2e/tracing/trace.zip",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run"
   },
   "dependencies": {
-    "@angular/common": "14.0.6",
-    "@angular/compiler": "14.0.6",
-    "@angular/core": "14.0.6",
-    "@angular/forms": "14.0.6",
-    "@angular/language-service": "14.0.6",
-    "@angular/platform-browser": "14.0.6",
-    "@angular/platform-browser-dynamic": "14.0.6",
-    "@angular/router": "14.0.6",
+    "@angular/animations": "14.1.0",
+    "@angular/cdk": "14.1.0",
+    "@angular/common": "14.1.0",
+    "@angular/compiler": "14.1.0",
+    "@angular/core": "14.1.0",
+    "@angular/flex-layout": "14.0.0-beta.40",
+    "@angular/forms": "14.1.0",
+    "@angular/language-service": "14.1.0",
+    "@angular/material": "14.1.0",
+    "@angular/platform-browser": "14.1.0",
+    "@angular/platform-browser-dynamic": "14.1.0",
+    "@angular/router": "14.1.0",
+    "better-sqlite3": "^7.6.2",
+    "knex": "2.2.0",
+    "material-icons": "1.11.8",
     "rxjs": "7.5.6",
     "tslib": "^2.4.0",
     "zone.js": "~0.11.6"
@@ -66,7 +63,7 @@
     "@angular-eslint/schematics": "14.0.2",
     "@angular-eslint/template-parser": "14.0.2",
     "@angular/cli": "14.1.0",
-    "@angular/compiler-cli": "14.0.6",
+    "@angular/compiler-cli": "14.1.0",
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "7.0.0",
     "@playwright/test": "1.23.4",
@@ -76,9 +73,10 @@
     "@typescript-eslint/eslint-plugin": "5.30.7",
     "@typescript-eslint/parser": "5.30.7",
     "conventional-changelog-cli": "2.2.2",
-    "electron": "19.0.8",
-    "electron-builder": "23.1.0",
+    "electron": "19.0.10",
+    "electron-builder": "^23.3.3",
     "electron-debug": "3.2.0",
+    "electron-rebuild": "^3.2.8",
     "electron-reloader": "1.2.3",
     "eslint": "8.20.0",
     "eslint-plugin-import": "2.26.0",
@@ -100,7 +98,10 @@
     "webdriver-manager": "12.1.8"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
+  },
+  "build": {
+    "buildDependenciesFromSource": true
   },
   "browserslist": [
     "chrome 100"

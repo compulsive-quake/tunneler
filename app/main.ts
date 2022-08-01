@@ -1,36 +1,82 @@
-import { app, BrowserWindow, screen } from 'electron';
+import {app, BrowserWindow, Tray, Menu } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
+import {getConfig, initHandles} from './services';
 
 let win: BrowserWindow = null;
-const args = process.argv.slice(1),
-  serve = args.some(val => val === '--serve');
+let tray;
+let isQuiting;
 
-function createWindow(): BrowserWindow {
+const tunnelsEnabled = true;
 
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+const args = process.argv.slice(1);
+const serve = args.some(val => val === '--serve');
 
-  // Create the browser window.
+app.disableHardwareAcceleration();
+
+app.on('before-quit', function () {
+  isQuiting = true;
+});
+
+async function createWindow() {
+  const config = await getConfig();
+  initHandles();
+
+  tray = new Tray('./icon.png');
+  tray.on('click', ()=> win.show());
+
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click: ()=> win.show(),
+      checked: false,
+    },
+    {
+     label: 'Quit', click: ()=> {
+        isQuiting = true;
+        app.quit();
+      }
+    },
+    {
+      label: 'Enable tunnels',
+      type: 'checkbox',
+      checked: tunnelsEnabled,
+    }
+  ]));
+
+  // const size = screen.getPrimaryDisplay().workAreaSize;
+
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
+    x: Number(config.windowX),
+    y: Number(config.windowY),
+    width:  Number(config.windowWidth),
+    height: Number(config.windowHeight),
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve) ? true : false,
-      contextIsolation: false,  // false if you want to run e2e test with Spectron
+      allowRunningInsecureContent: (serve),
+      contextIsolation: false,
     },
+    icon:'./icon.png',
+    autoHideMenuBar: true,
   });
+
+  win.on('minimize', (event)=> {
+    event.preventDefault();
+    win.hide();
+  });
+
 
   if (serve) {
     const debug = require('electron-debug');
     debug();
 
     require('electron-reloader')(module);
+
+    // ipcMain.on('set-title', handleSetTitle);
+
     win.loadURL('http://localhost:4200');
+
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';
@@ -49,40 +95,21 @@ function createWindow(): BrowserWindow {
 
   // Emitted when the window is closed.
   win.on('closed', () => {
-    // Dereference the window object, usually you would store window
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     win = null;
   });
-
-  return win;
 }
 
 try {
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
-  // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => setTimeout(createWindow, 400));
 
-  // Quit when all windows are closed.
   app.on('window-all-closed', () => {
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
+    if (process.platform !== 'darwin') { app.quit(); }
   });
 
   app.on('activate', () => {
-    // On OS X it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (win === null) {
-      createWindow();
-    }
+    if (win === null) { createWindow(); }
   });
 
 } catch (e) {
-  // Catch Error
-  // throw e;
+  console.error(e);
 }

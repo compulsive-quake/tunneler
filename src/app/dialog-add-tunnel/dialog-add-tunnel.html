@@ -1,0 +1,93 @@
+<div>
+  <div fxLayoutAlign="center center" >
+    <h2 >Add Tunnel</h2>
+  </div>
+  <div fxLayout="column">
+    <h4>Proxy</h4>
+    <mat-form-field appearance="standard" class="host-field" *ngIf="proxies.length && !showAddProxy" >
+      <mat-label>Proxy</mat-label>
+      <mat-select [(ngModel)]="newTunnel.proxy">
+        <mat-option *ngFor="let proxy of proxies" [value]="proxy.id">
+          {{proxy.title}}<br>{{proxy.host}}<section *ngIf="proxy.port">:{{proxy.port}}</section>
+        </mat-option>
+        <mat-option (click)="showAddProxy = !showAddProxy">
+          Add Proxy
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="!proxies.length || showAddProxy">
+      <form class="add-proxy-form" fxLayout="column" (submit)="addProxy()">
+
+        <mat-form-field class="add-proxy-title-field" appearance="standard">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="newProxy.title" name="proxyPort">
+        </mat-form-field>
+
+        <mat-form-field class="add-proxy-host-field" appearance="standard">
+          <mat-label>Host</mat-label>
+          <input matInput [(ngModel)]="newProxy.host" name="proxyPort">
+        </mat-form-field>
+        <mat-form-field class="add-proxy-port-field" appearance="standard">
+          <mat-label>Port</mat-label>
+          <input matInput [(ngModel)]="newProxy.port" name="proxyPort" type="number">
+        </mat-form-field>
+
+        <div>
+          <button mat-raised-button type="submit" color="primary">add proxy</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+  <div fxLayout="column">
+    <h4>Host</h4>
+
+    <mat-form-field appearance="standard" class="host-field" *ngIf="hosts.length">
+      <mat-label>Host</mat-label>
+      <mat-select [(ngModel)]="newTunnel.host">
+        <mat-option *ngFor="let host of hosts" [value]="host.id">
+          {{host.title}}<br>{{host.host}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="!hosts.length || showAddHost">
+      <form class="add-host-form" fxLayout="column">
+
+        <mat-form-field class="add-host-title-field" appearance="standard">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="newHost.title" name="proxyPort">
+        </mat-form-field>
+
+        <mat-form-field class="add-host-host-field" appearance="standard">
+          <mat-label>Host</mat-label>
+          <input matInput [(ngModel)]="newHost.host" name="hostPort">
+        </mat-form-field>
+
+        <div>
+          <button mat-raised-button (click)="addHost()" color="primary">add host</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+
+  <div fxLayout="row" fxLayoutAlign="space-between">
+    <mat-form-field appearance="standard" class="port-field">
+      <mat-label>Local Port</mat-label>
+      <input matInput [(ngModel)]="newTunnel.localPort" name="tunnelLocalPort">
+    </mat-form-field>
+    <mat-form-field appearance="standard" class="port-field">
+      <mat-label>Remote Port</mat-label>
+      <input matInput [(ngModel)]="newTunnel.remotePort" name="tunnelRemotePort">
+    </mat-form-field>
+  </div>
+</div>
+
+<div>
+  <button mat-button (click)="cancel()">cancel</button>
+  <button mat-button (click)="submit()">submit</button>
+</div>
