@@ -1,96 +1,125 @@
-<div>
-  <div fxLayoutAlign="center center" >
-    <h2 >Add Tunnel</h2>
-  </div>
-  <div fxLayout="column">
+<div fxLayoutAlign="center center" fxLayout="column">
+  <h2 *ngIf="!showAddProxy && !showAddHost">Add Tunnel</h2>
+  <h2 *ngIf="showAddProxy">Add Proxy</h2>
 
-    <mat-form-field appearance="standard" class="host-field" *ngIf="proxies.length && !showAddProxy" >
-      <mat-label>Proxy</mat-label>
-      <mat-select [(ngModel)]="newTunnel.proxy">
-        <mat-option *ngFor="let proxy of proxies" [value]="proxy.id">
-          {{proxy.title}} - {{proxy.host | slice:0:32}}
-        </mat-option>
-        <mat-option (click)="showAddProxy = true">
-          Add Proxy
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div *ngIf="!proxies.length || showAddProxy">
-      <h4>Proxy</h4>
-
-      <form class="add-proxy-form" fxLayout="column" (submit)="addProxy()">
-
-        <mat-form-field class="add-proxy-title-field" appearance="standard">
-          <mat-label>Title</mat-label>
-          <input matInput [(ngModel)]="newProxy.title" name="proxyPort">
-        </mat-form-field>
-
-        <mat-form-field class="add-proxy-host-field" appearance="standard">
-          <mat-label>Host</mat-label>
-          <input matInput [(ngModel)]="newProxy.host" name="proxyPort">
-        </mat-form-field>
-
-        <mat-form-field class="add-proxy-port-field" appearance="standard">
-          <mat-label>Port</mat-label>
-          <input matInput [(ngModel)]="newProxy.port" name="proxyPort" type="number">
-        </mat-form-field>
-
-        <div>
-          <button mat-raised-button type="submit" color="primary">add proxy</button>
-        </div>
-
-      </form>
+  <!--    <mat-progress-bar mode="query"></mat-progress-bar>-->
+  <!--    <mat-progress-bar mode="determinate" value="100"  color="primary" ></mat-progress-bar>-->
+</div>
+<div fxLayout="column">
+  <!-- tunnel-->
+  <div>
+    <div fxLayout="column">
+      <mat-form-field appearance="outline" class="title-field">
+        <mat-label>Title</mat-label>
+        <input matInput [(ngModel)]="newTunnel.title" name="tunnelTitle">
+      </mat-form-field>
     </div>
 
-  </div>
-  <div fxLayout="column">
-    <h4>Host</h4>
+    <!-- ports -->
+    <div fxLayout="row" fxLayoutAlign="space-between">
+      <mat-form-field appearance="outline" class="port-field">
+        <mat-label>Local Port</mat-label>
+        <input matInput [(ngModel)]="newTunnel.localPort" name="tunnelLocalPort">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="port-field">
+        <mat-label>Remote Port</mat-label>
+        <input matInput [(ngModel)]="newTunnel.remotePort" name="tunnelRemotePort">
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="standard" class="host-field" *ngIf="hosts.length">
-      <mat-label>Host</mat-label>
-      <mat-select [(ngModel)]="newTunnel.host">
-        <mat-option *ngFor="let host of hosts" [value]="host.id">
-          {{host.title}}<br>{{host.host}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <!-- hosts -->
+    <div *ngIf="hosts.length && !showAddHost">
+      <mat-form-field appearance="outline" class="host-field">
+        <mat-label>Host</mat-label>
+        <mat-select [(ngModel)]="newTunnel.host">
+          <mat-option (click)="showAddHost = true">
+            Add Host
+          </mat-option>
+          <mat-divider></mat-divider>
+          <mat-option *ngFor="let host of hosts" [value]="host.id">
+            {{host.title + ' - ' + host.host | slice:0:70}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <div *ngIf="!hosts.length || showAddHost">
       <form class="add-host-form" fxLayout="column">
-
-        <mat-form-field class="add-host-title-field" appearance="standard">
-          <mat-label>Title</mat-label>
-          <input matInput [(ngModel)]="newHost.title" name="proxyPort">
+        <mat-form-field class="add-host-title-field" appearance="outline">
+          <mat-label>Host Title</mat-label>
+          <input matInput [(ngModel)]="newHost.title" name="newHostTitle">
         </mat-form-field>
 
-        <mat-form-field class="add-host-host-field" appearance="standard">
-          <mat-label>Host</mat-label>
-          <input matInput [(ngModel)]="newHost.host" name="hostPort">
+        <mat-form-field class="add-host-host-field" appearance="outline">
+          <mat-label>Hostname</mat-label>
+          <input matInput [(ngModel)]="newHost.host" name="newHostName">
         </mat-form-field>
 
         <div>
-          <button mat-raised-button (click)="addHost()" color="primary">add host</button>
+          <button mat-raised-button (click)="addHost()" [disabled]="!newHost.title || !newHost.host" color="primary">Add host</button>
         </div>
 
       </form>
     </div>
+
+    <!-- proxies -->
+    <div *ngIf="proxies.length && !showAddProxy">
+      <mat-form-field appearance="outline" class="host-field">
+        <mat-label>Proxy</mat-label>
+        <mat-select [(ngModel)]="newTunnel.proxy">
+          <mat-option (click)="showAddProxy = true">
+            Add Proxy
+          </mat-option>
+          <mat-divider></mat-divider>
+          <mat-option *ngFor="let proxy of proxies" [value]="proxy.id">
+            {{proxy.title}} - {{proxy.host | slice:0:32}}
+          </mat-option>
+
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="!proxies.length || showAddProxy">
+      <form class="add-proxy-form" fxLayout="column">
+        <mat-form-field class="add-proxy-title-field" appearance="outline">
+          <mat-label>Proxy Title</mat-label>
+          <input matInput [(ngModel)]="newProxy.title" name="proxyPort">
+        </mat-form-field>
+
+        <mat-form-field class="add-proxy-host-field" appearance="outline">
+          <mat-label>Proxy Hostname</mat-label>
+          <input matInput [(ngModel)]="newProxy.host" name="proxyPort">
+        </mat-form-field>
+
+        <mat-form-field class="add-proxy-port-field" appearance="outline">
+          <mat-label>Proxy Port</mat-label>
+          <input matInput [(ngModel)]="newProxy.port" name="proxyPort" type="number">
+        </mat-form-field>
+
+        <div fxLayoutGap="5" fxLayout="column">
+          <div>
+            <button mat-raised-button (click)="cancelAddProxy()">cancel</button>
+          </div>
+          <div>
+            <button mat-raised-button (click)="addProxy()" color="primary">add proxy</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- actions -->
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="5">
+      <button mat-raised-button (click)="cancel()">cancel</button>
+      <div fxFlex>
+        <mat-progress-bar mode="query" color="primary" *ngIf="loadingHosts || loadingProxies"></mat-progress-bar>
+        <mat-progress-bar mode="determinate" [value]="testingTimer" *ngIf="testingTunnel"></mat-progress-bar>
+        <mat-progress-bar mode="indeterminate" *ngIf="submittingTunnel"></mat-progress-bar>
+      </div>
+      <button mat-button (click)="testTunnel()" [disabled]="testingTunnel || submitDisabled()">
+        {{testingTunnel ? testingTimer.toExponential(0) / 10 : 'test'}}
+      </button>
+      <button mat-raised-button (click)="submitTunnel()" color="primary" [disabled]="submitDisabled()">submit</button>
+    </div>
   </div>
 
-
-  <div fxLayout="row" fxLayoutAlign="space-between">
-    <mat-form-field appearance="standard" class="port-field">
-      <mat-label>Local Port</mat-label>
-      <input matInput [(ngModel)]="newTunnel.localPort" name="tunnelLocalPort">
-    </mat-form-field>
-    <mat-form-field appearance="standard" class="port-field">
-      <mat-label>Remote Port</mat-label>
-      <input matInput [(ngModel)]="newTunnel.remotePort" name="tunnelRemotePort">
-    </mat-form-field>
-  </div>
-</div>
-
-<div fxLayout="row" fxLayoutAlign="space-between">
-  <button mat-flat-button (click)="cancel()" color="warn">cancel</button>
-  <button mat-flat-button (click)="submit()" color="primary">submit</button>
 </div>

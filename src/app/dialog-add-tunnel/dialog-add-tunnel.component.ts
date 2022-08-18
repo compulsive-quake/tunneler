@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { DialogRef } from '@angular/cdk/dialog';
 import { AddTunnelDialogData, Host, Proxy } from '../app.component';
 import { ElectronService, SnackbarService } from '../core/services';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-dialog-add-tunnel',
@@ -28,12 +29,17 @@ export class DialogAddTunnelComponent {
   showAddHost = false;
 
   newTunnel: AddTunnelDialogData = {
-    proxy: null,
-    host: null,
+    title: null,
     localPort: null,
     remotePort: null,
+    proxy: null,
+    host: null,
+    group: null,
   };
+
   submittingTunnel = false;
+  testingTunnel = false;
+  testingTimer = 100;
 
   constructor(
     public dialogRef: DialogRef<string>,
@@ -51,19 +57,32 @@ export class DialogAddTunnelComponent {
   async getHosts() {
     this.loadingHosts = true;
 
+    const cancel = (err?: Error, msg?: string): void => {
+      clearTimeout(timeout);
+      this.loadingHosts = false;
+      if (err) {
+        console.error(err);
+        this.sb.error(msg ? msg : err.message, 'error');
+      }
+    };
+
     const timeout = setTimeout(()=>{
-      throw new Error('timed out submitting tunnel');
+      cancel(new Error('timed out waiting for Hosts'));
     }, 10000);
 
     try {
-      this.hosts = await this.es.ipcRenderer.invoke('getHosts');
-      clearTimeout(timeout);
-    } catch (e) {
-      clearTimeout(timeout);
-      this.sb.open('Error getting hosts', 'close');
-      console.error(e);
-    }
+      const results: Host[] = await this.es.ipcRenderer.invoke('getHosts');
 
+      if (results && results.length) {
+        results.forEach(result => this.hosts.push(result));
+      } else {
+        this.showAddHost = true;
+      }
+
+      cancel();
+    } catch (e) {
+      cancel(e, 'Error getting Hosts');
+    }
   }
 
   public async getProxies() {
@@ -74,11 +93,12 @@ export class DialogAddTunnelComponent {
       throw new Error('timed out submitting tunnel');
     }, 10000);
 
-    const cancel = (err?: Error) => {
+    const cancel = (err?: Error, msg?: string) => {
       this.loadingProxies = false;
       clearTimeout(timeout);
       if (err) {
         console.error(err);
+        this.sb.error(msg ? msg : err.message);
       }
     };
 
@@ -87,37 +107,13 @@ export class DialogAddTunnelComponent {
 
       if (results && results.length) {
         results.forEach(result => this.proxies.push(result));
+      } else {
+        this.showAddProxy = true;
       }
 
       cancel();
-    } catch (e) {
-      cancel();
-      this.sb.open('Error getting proxies', 'close');
-    }
-  }
-
-  public async submit(): Promise<void> {
-    this.submittingTunnel = true;
-
-    const timeout = setTimeout(()=>{
-      throw new Error('timed out submitting tunnel');
-    }, 10000);
-
-    const cancel = (err?: Error) => {
-      this.loadingProxies = false;
-      clearTimeout(timeout);
-      if (err) {
-        console.error(err);
-      }
-    };
-
-    try {
-      await this.es.ipcRenderer.invoke('addTunnel', this.newTunnel);
-      cancel();
-      this.dialogRef.close();
     } catch (err) {
-      cancel(err);
-      throw new Error('Error adding tunnel');
+      cancel(err, 'Error getting proxies');
     }
   }
 
@@ -135,11 +131,90 @@ export class DialogAddTunnelComponent {
     }
   }
 
+  public async submitTunnel(): Promise<void> {
+    this.submittingTunnel = true;
+
+    const timeout = setTimeout(()=>{
+      cancel(new Error('timed out submitting tunnel'));
+    }, 10000);
+
+    const cancel = (err?: Error, msg?: string) => {
+      this.submittingTunnel = true;
+      clearTimeout(timeout);
+      if (err) {
+        console.error(err);
+        this.sb.error(msg ? msg : err.message);
+      }
+    };
+
+    try {
+      await this.es.ipcRenderer.invoke('addTunnel', this.newTunnel);
+      cancel();
+      this.dialogRef.close();
+    } catch (err) {
+      cancel(err, 'Error adding tunnel');
+    }
+  }
+
   testProxy() {
 
   }
 
   public async addHost() {
-    await this.es.ipcRenderer.invoke('addHost', this.newHost);
+    const result = await this.es.ipcRenderer.invoke('addHost', this.newHost);
+    if (result) {
+      this.hosts.push({id: result, ...this.newHost});
+      this.newTunnel.host = result;
+      this.showAddHost = false;
+      this.newHost = {
+        title: null,
+        host: null,
+      };
+    }
+  }
+
+  public submitDisabled() {
+    return (
+      !this.newTunnel.title ||
+      !this.newTunnel.host ||
+      !this.newTunnel.proxy ||
+      !this.newTunnel.remotePort ||
+      !this.newTunnel.localPort
+    );
+  }
+
+  public async testTunnel() {
+
+    this.testingTunnel = true;
+    this.testingTimer = 100;
+
+    const interval = setInterval(()=>{
+      this.testingTimer -= 1;
+    }, 100);
+
+    //todo: customize timeout with settingsService
+    const timeout = setTimeout(()=>{
+      cancel(new Error('timed out testing tunnel'));
+    }, 10000);
+
+    const cancel = (err?: Error, msg?: string) => {
+      this.testingTunnel = false;
+      clearInterval(interval);
+      clearTimeout(timeout);
+      if (err) {
+        console.error(err);
+        this.sb.error(msg ? msg : err.message);
+      }
+    };
+
+    try {
+      await this.es.ipcRenderer.invoke('testTunnel', this.newTunnel);
+    } catch (err) {
+      cancel(err, 'Tunnel connection failed');
+    }
+  }
+
+  cancelAddProxy() {
+    this.showAddProxy = false;
   }
 }

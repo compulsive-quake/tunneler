@@ -5,10 +5,13 @@ import {Dialog} from '@angular/cdk/dialog';
 import {DialogAddTunnelComponent} from './dialog-add-tunnel/dialog-add-tunnel.component';
 
 export interface AddTunnelDialogData {
-  proxy: string | undefined;
-  host: string | undefined;
-  localPort: number | undefined;
-  remotePort: number | undefined;
+  id?: number;
+  title?: string;
+  localPort?: number;
+  remotePort?: number;
+  host?: number;
+  group?: number;
+  proxy?: number;
 }
 
 export interface Host {
@@ -63,6 +66,8 @@ export class AppComponent {
 
   public addTunnel(): void {
     const dialogRef = this.dialog.open<string>(DialogAddTunnelComponent, {
+      minWidth: 512,
+      // maxWidth: 600,
       panelClass: 'dialog-add-tunnel',
     });
 

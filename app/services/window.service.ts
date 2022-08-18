@@ -38,8 +38,8 @@ export function monitorPosition(win) {
   win.on('resized', updatePosition);
   win.on('moved', updatePosition);
 
-  win.on('closed', (event) => {
-    event.preventDefault();
+  win.on('close', (event) => {
+    // event.preventDefault();
     win.hide();
     // win = null;
   });

@@ -2,7 +2,6 @@ import {Knex} from 'knex';
 
 export async function up(knex: Knex) {
 
-  // Groups
   await knex.schema.createTable('Groups', table => {
 
     table.increments('id').primary();
@@ -11,26 +10,42 @@ export async function up(knex: Knex) {
 
   });
 
-  // Hosts
   await knex.schema.createTable('Hosts', table => {
 
     table.increments('id').primary();
     table.string('title');
     table.string('host');
+    table.string('run').comment('command to run after tunnel opens');
+    table.string('dir').comment('working directory of run command');
 
   });
 
-  // Proxies
+  await knex.schema.createTable('HostTypes', table => {
+
+    table.increments('id').primary();
+    table.string('title');
+    table.string('icon');
+
+  });
+
+  await knex.schema.createTable('Icons', table => {
+
+    table.increments('id').primary();
+    table.string('title');
+    table.string('filePath');
+
+  });
+
   await knex.schema.createTable('Proxies', table => {
 
     table.increments('id').primary();
     table.string('title');
     table.string('host');
     table.string('port');
+    table.string('identityFile');
 
   });
 
-  // Tunnels
   await knex.schema.createTable('Tunnels', table => {
 
     table.increments('id').primary();
@@ -43,7 +58,6 @@ export async function up(knex: Knex) {
 
   });
 
-  // Settings
   await knex.schema.createTable('Settings', table => {
 
     table.increments('id').primary();
@@ -52,7 +66,6 @@ export async function up(knex: Knex) {
 
   });
 
-  // Logs
   await knex.schema.createTable('Logs', table => {
 
     table.increments('id').primary();
@@ -65,5 +78,5 @@ export async function up(knex: Knex) {
 }
 
 export function down(_knex: Knex) {
-  throw new Error('Downward migrations are not supported. Restore from backup.');
+  throw new Error('Migration rollback not supported');
 }

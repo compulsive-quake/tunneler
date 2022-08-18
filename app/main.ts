@@ -2,16 +2,16 @@ import { app, BrowserWindow, Tray, Menu } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
-import { getConfig, initHandles, monitorPosition, initTray } from './services';
+import {getConfig, initHandles, monitorPosition, initTray, checkMigrationHistory} from './services';
 
 let win: BrowserWindow = null;
 
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve');
 
-// app.on('before-quit', function () {});
-
 async function createWindow() {
+  await checkMigrationHistory();
+
   const config = await getConfig();
 
   win = new BrowserWindow({
@@ -59,9 +59,10 @@ async function createWindow() {
 }
 
 try {
+
   app.disableHardwareAcceleration();
 
-  app.on('ready', () => setTimeout(createWindow, 400));
+  app.on('ready', createWindow);
 
   app.on('window-all-closed', () => {
     //todo: check config for minimize to tray

@@ -33,13 +33,13 @@ import { AppComponent } from './app.component';
 import { DialogAddTunnelComponent } from './dialog-add-tunnel/dialog-add-tunnel.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatTooltipModule} from '@angular/material/tooltip';
-
-
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {SnackBarComponent} from './core/services';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 @NgModule({
-  declarations: [AppComponent, DialogAddTunnelComponent],
+  declarations: [AppComponent, DialogAddTunnelComponent, SnackBarComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -72,6 +72,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     MatSnackBarModule,
     MatDividerModule,
     MatTooltipModule,
+    MatProgressBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
