@@ -80,31 +80,6 @@
     </div>
 
     <div *ngIf="!proxies.length || showAddProxy">
-      <form class="add-proxy-form" fxLayout="column">
-        <mat-form-field class="add-proxy-title-field" appearance="outline">
-          <mat-label>Proxy Title</mat-label>
-          <input matInput [(ngModel)]="newProxy.title" name="proxyPort">
-        </mat-form-field>
-
-        <mat-form-field class="add-proxy-host-field" appearance="outline">
-          <mat-label>Proxy Hostname</mat-label>
-          <input matInput [(ngModel)]="newProxy.host" name="proxyPort">
-        </mat-form-field>
-
-        <mat-form-field class="add-proxy-port-field" appearance="outline">
-          <mat-label>Proxy Port</mat-label>
-          <input matInput [(ngModel)]="newProxy.port" name="proxyPort" type="number">
-        </mat-form-field>
-
-        <div fxLayoutGap="5" fxLayout="column">
-          <div>
-            <button mat-raised-button (click)="cancelAddProxy()">cancel</button>
-          </div>
-          <div>
-            <button mat-raised-button (click)="addProxy()" color="primary">add proxy</button>
-          </div>
-        </div>
-      </form>
     </div>
 
     <!-- actions -->

@@ -37,5 +37,4 @@ export async function getConfig(): Promise<ElectronConfig> {
   }
 
   return config;
-
 }

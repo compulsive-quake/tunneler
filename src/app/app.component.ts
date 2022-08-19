@@ -3,6 +3,7 @@ import {ElectronService} from './core/services';
 import {TranslateService} from '@ngx-translate/core';
 import {Dialog} from '@angular/cdk/dialog';
 import {DialogAddTunnelComponent} from './dialog-add-tunnel/dialog-add-tunnel.component';
+import {Router} from '@angular/router';
 
 export interface AddTunnelDialogData {
   id?: number;
@@ -48,6 +49,7 @@ export class AppComponent {
     private electronService: ElectronService,
     private translate: TranslateService,
     public dialog: Dialog,
+    public router: Router,
   ) {
 
     this.translate.setDefaultLang('en');
@@ -76,8 +78,11 @@ export class AppComponent {
     });
   }
 
+  public async newProxy(): Promise<void> {
+    await this.router.navigate(['proxy/new']);
+  }
+
   private logHandler = (socket, log) => {
     console.log(log);
   };
-
 }

@@ -1,33 +1,56 @@
 import {db} from './knex.service'
 
-type Settings = {
+interface Bounds {
   windowWidth?: number;
   windowHeight?: number;
   windowX?: number;
   windowY?: number;
 }
 
-export async function updateSettings(settings: Settings) {
+export async function updateSettings(bounds) {
+  const existingSettings = await db('Settings').select('*');
+  const boundArray = Object.keys(bounds);
+  const toUpdate = [];
+  const toInsert = [];
 
-  Object.keys(settings).forEach(async function eachKey(key) {
-    await db('Settings')
-      .update('setting', settings[key])
-      .where('title', key);
-  });
+  const processSetting = async title => {
+    const found = existingSettings.find(elem => {
+      return elem.title === title;
+    });
+    const setting = bounds[title];
 
+    if (found) {
+      toUpdate.push({ title, setting });
+    } else {
+      toInsert.push({ title, setting});
+    }
+  }
+
+  boundArray.forEach(processSetting);
+
+  if (toUpdate.length) {
+    toUpdate.forEach(async (update: any) => {
+      await db('Settings').update(update).where('title', update.title);
+    });
+  }
+
+  if (toInsert.length) {
+    await db('Settings').insert(toInsert);
+  }
 }
 
 export function monitorPosition(win) {
 
   const updatePosition = async () => {
     const bounds = win.getBounds();
-
-    await updateSettings({
+    const payload = {
       windowWidth: bounds.width,
       windowHeight: bounds.height,
       windowX: bounds.x,
       windowY: bounds.y
-    });
+    };
+
+    await updateSettings(payload);
   }
 
   win.on('minimize', (event)=> {

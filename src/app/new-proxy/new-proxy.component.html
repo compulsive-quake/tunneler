@@ -1,0 +1,62 @@
+<div class="container">
+  <div fxLayout="column" fxLayoutAlign="center center">
+    <h3 >New Proxy</h3>
+  </div>
+  <div fxLayout="column" fxLayoutAlign="center start" fxLayoutGap="10">
+    <form class="form" fxLayout="column">
+      <mat-form-field class="title-field" appearance="standard" fxFlex>
+        <mat-label>Title</mat-label>
+        <input matInput [formControl]="title" name="proxyPort">
+      </mat-form-field>
+
+      <mat-form-field class="host-field" appearance="standard">
+        <mat-label>Host</mat-label>
+        <input
+          matInput
+          [formControl]="host"
+          placeholder="bastion.example.com">
+      </mat-form-field>
+      <mat-form-field class="port-field" appearance="standard">
+        <mat-label>Port</mat-label>
+        <input
+          [formControl]="port"
+          matInput
+          type="number"
+          max="65535"
+          class="port-input"
+          placeholder="1 - 65535"
+        >
+      </mat-form-field>
+      <mat-error *ngIf="!port.invalid">&nbsp;</mat-error>
+      <mat-error *ngIf="port.invalid">{{getPortError()}}</mat-error>
+
+      <mat-form-field class="identity-field" appearance="standard">
+        <mat-label>Identity</mat-label>
+        <input
+          [formControl]="identity"
+          matInput
+          class="identity-input"
+          placeholder="id_ed25519.pub"
+        >
+      </mat-form-field>
+      <div>
+        <input hidden id="file" type="file" #fileInput (change)="onFileSelected($event)">
+        <button type="button" mat-raised-button (click)="fileInput.click()">Choose Identity File</button>
+      </div>
+      <mat-error *ngIf="!port.invalid">&nbsp;</mat-error>
+      <mat-error *ngIf="port.invalid">{{getPortError()}}</mat-error>
+    </form>
+  </div>
+  <div fxLayoutGap="5" fxLayout="row">
+    <div>
+      <button mat-raised-button (click)="cancelAddProxy()" color="warn">cancel</button>
+    </div>
+    <div fxFlex></div>
+    <div>
+      <button mat-raised-button (click)="testProxy()" color="accent">Test</button>
+    </div>
+    <div>
+      <button mat-raised-button (click)="addProxy()" color="primary">add proxy</button>
+    </div>
+  </div>
+</div>

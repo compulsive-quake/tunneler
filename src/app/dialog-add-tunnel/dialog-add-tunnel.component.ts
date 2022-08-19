@@ -117,19 +117,7 @@ export class DialogAddTunnelComponent {
     }
   }
 
-  public async addProxy() {
-    const result = await this.es.ipcRenderer.invoke('addProxy', this.newProxy);
-    if (result) {
-      this.proxies.push({id: result, ...this.newProxy});
-      this.newTunnel.proxy = result;
-      this.showAddProxy = false;
-      this.newProxy = {
-        title: null,
-        host: null,
-        port: null
-      };
-    }
-  }
+
 
   public async submitTunnel(): Promise<void> {
     this.submittingTunnel = true;

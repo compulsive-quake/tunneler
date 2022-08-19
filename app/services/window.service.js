@@ -11,27 +11,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.monitorPosition = exports.updateSettings = void 0;
 const knex_service_1 = require("./knex.service");
-function updateSettings(settings) {
+function updateSettings(bounds) {
     return __awaiter(this, void 0, void 0, function* () {
-        Object.keys(settings).forEach(function eachKey(key) {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield (0, knex_service_1.db)('Settings')
-                    .update('setting', settings[key])
-                    .where('title', key);
+        const existingSettings = yield (0, knex_service_1.db)('Settings').select('*');
+        const boundArray = Object.keys(bounds);
+        const toUpdate = [];
+        const toInsert = [];
+        const processSetting = (title) => __awaiter(this, void 0, void 0, function* () {
+            const found = existingSettings.find(elem => {
+                return elem.title === title;
             });
+            const setting = bounds[title];
+            if (found) {
+                toUpdate.push({ title, setting });
+            }
+            else {
+                toInsert.push({ title, setting });
+            }
         });
+        boundArray.forEach(processSetting);
+        if (toUpdate.length) {
+            toUpdate.forEach((update) => __awaiter(this, void 0, void 0, function* () {
+                yield (0, knex_service_1.db)('Settings').update(update).where('title', update.title);
+            }));
+        }
+        if (toInsert.length) {
+            yield (0, knex_service_1.db)('Settings').insert(toInsert);
+        }
     });
 }
 exports.updateSettings = updateSettings;
 function monitorPosition(win) {
     const updatePosition = () => __awaiter(this, void 0, void 0, function* () {
         const bounds = win.getBounds();
-        yield updateSettings({
+        const payload = {
             windowWidth: bounds.width,
             windowHeight: bounds.height,
             windowX: bounds.x,
             windowY: bounds.y
-        });
+        };
+        yield updateSettings(payload);
     });
     win.on('minimize', (event) => {
         event.preventDefault();

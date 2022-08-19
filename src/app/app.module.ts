@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 
@@ -35,11 +35,13 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {SnackBarComponent} from './core/services';
+import { NewProxyComponent } from './new-proxy/new-proxy.component';
+import {MatMenuModule} from '@angular/material/menu';
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 @NgModule({
-  declarations: [AppComponent, DialogAddTunnelComponent, SnackBarComponent],
+  declarations: [AppComponent, DialogAddTunnelComponent, SnackBarComponent, NewProxyComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -73,6 +75,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     MatDividerModule,
     MatTooltipModule,
     MatProgressBarModule,
+    MatMenuModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
