@@ -84,24 +84,9 @@ export class NewProxyComponent implements OnInit {
 
     return this.port.hasError('max') ? 'TCP port number must be 65535 or less' : '';
   }
-
-  public onFileSelected(event) {
-    console.log(event.target.files[0].src);
-    // if(event.target.files.length > 0)
-    // {
-    //   console.log(event.target.files);
-    // }
-    const inputNode: any = document.querySelector('#file');
-
-    if (typeof (FileReader) !== 'undefined') {
-      const reader = new FileReader();
-
-      reader.onload = (e: any) => {
-        console.log(inputNode);
-        this.identity.patchValue(e.target.result);
-      };
-
-      reader.readAsArrayBuffer(inputNode.files[0]);
-    }
+  public async getIdentityFiles() {
+    const result = await this.es.ipcRenderer.invoke('getIdentityFiles');
+    this.identity.setValue(result);
+    console.log(result);
   }
 }

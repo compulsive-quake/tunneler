@@ -19,4 +19,5 @@ __exportStar(require("./data.service"), exports);
 __exportStar(require("./knex.service"), exports);
 __exportStar(require("./window.service"), exports);
 __exportStar(require("./tray.service"), exports);
+__exportStar(require("./proxy.service"), exports);
 //# sourceMappingURL=index.js.map

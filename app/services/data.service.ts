@@ -1,5 +1,6 @@
 import { db } from './knex.service';
 import { ipcMain } from 'electron';
+import { getIdentityFiles } from './proxy.service';
 
 export interface Proxy {
   id: number;
@@ -42,6 +43,7 @@ export function initHandles(): void {
   ipcMain.handle('addProxy', addProxy);
   ipcMain.handle('getTunnels', getTunnels);
   ipcMain.handle('testTunnel', testTunnels);
+  ipcMain.handle('getIdentityFiles', getIdentityFiles);
 }
 
 export async function getHosts() {

@@ -40,8 +40,7 @@
         >
       </mat-form-field>
       <div>
-        <input hidden id="file" type="file" #fileInput (change)="onFileSelected($event)">
-        <button type="button" mat-raised-button (click)="fileInput.click()">Choose Identity File</button>
+        <button type="button" mat-raised-button (click)="getIdentityFiles()">Choose Identity File</button>
       </div>
       <mat-error *ngIf="!port.invalid">&nbsp;</mat-error>
       <mat-error *ngIf="port.invalid">{{getPortError()}}</mat-error>

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.testTunnels = exports.getTunnels = exports.deleteProxy = exports.addProxy = exports.getProxies = exports.addHost = exports.getHosts = exports.initHandles = void 0;
 const knex_service_1 = require("./knex.service");
 const electron_1 = require("electron");
+const proxy_service_1 = require("./proxy.service");
 function initHandles() {
     electron_1.ipcMain.handle('getHosts', getHosts);
     electron_1.ipcMain.handle('addHost', addHost);
@@ -19,6 +20,7 @@ function initHandles() {
     electron_1.ipcMain.handle('addProxy', addProxy);
     electron_1.ipcMain.handle('getTunnels', getTunnels);
     electron_1.ipcMain.handle('testTunnel', testTunnels);
+    electron_1.ipcMain.handle('getIdentityFiles', proxy_service_1.getIdentityFiles);
 }
 exports.initHandles = initHandles;
 function getHosts() {
